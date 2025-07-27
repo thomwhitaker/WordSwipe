@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Word Flash</title>
+  <style>
+    body {
+      margin: 0;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      user-select: none;
+    }
+    .word {
+      font-size: 10vw;
+      font-weight: bold;
+      color: black;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="word" id="wordDisplay">Tap to Start</div>
+
+  <script>
+    const words = [
+      "said", "come", "were", "one", "some",
+      "friend", "people", "could", "should", "would"
+    ];
+
+    let shuffled = [];
+    let index = 0;
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function showNextWord() {
+      if (index >= shuffled.length) {
+        shuffled = shuffle([...words]);
+        index = 0;
+      }
+      document.getElementById('wordDisplay').textContent = shuffled[index];
+      index++;
+    }
+
+    document.body.addEventListener('click', showNextWord);
+  </script>
+</body>
+</html>
