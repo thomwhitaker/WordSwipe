@@ -1,55 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Word Flash</title>
-  <style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Word Flash</title>
+<style>
     body {
-      margin: 0;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-      user-select: none;
+        margin: 0;
+        padding: 0;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: sans-serif;
+        user-select: none;
+        overflow: hidden;
+        flex-direction: column;
     }
-    .word {
-      font-size: 10vw;
-      font-weight: bold;
-      color: black;
-      text-align: center;
-      padding: 20px;
+    #word {
+        font-size: 10vw;
+        font-weight: bold;
+        text-align: center;
+        padding: 40px;
     }
-  </style>
+    .Reception { color: #007acc; }
+    .Year\ 1 { color: #28a745; }
+    .Year\ 2 { color: #e83e8c; }
+    #score {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 20px;
+    }
+    #result {
+        font-size: 24px;
+        margin-top: 20px;
+    }
+</style>
 </head>
 <body>
-  <div class="word" id="wordDisplay">Tap to Start</div>
+<div id="score">Correct: 0 | Incorrect: 0</div>
+<div id="word">Tap to Start</div>
+<div id="result"></div>
 
-  <script>
+<script>
     const words = [
-      "said", "come", "were", "one", "some",
-      "friend", "people", "could", "should", "would"
+        // Reception
+        ...["the", "to", "I", "no", "go", "into"].map(w => ({ word: w, group: "Reception" })),
+        // Year 1
+        ...["said", "says", "are", "were", "was", "is", "his", "has", "I", "you", "your",
+        "they", "be", "he", "me", "she", "we", "no", "go", "so", "by", "my", "here",
+        "there", "where", "love", "come", "some", "one", "once", "do", "does", "friend",
+        "school", "house", "our"].map(w => ({ word: w, group: "Year 1" })),
+        // Year 2
+        ...["door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children",
+        "wild", "climb", "most", "only", "both", "old", "cold", "gold", "hold", "told", "every",
+        "everybody", "even", "great", "break", "steak", "pretty", "beautiful", "after", "fast", "last",
+        "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove",
+        "improve", "sure", "sugar", "eye", "could", "should", "would", "who", "whole", "any", "many",
+        "clothes", "busy", "people", "water"].map(w => ({ word: w, group: "Year 2" }))
     ];
 
-    let shuffled = [];
+    const shuffled = words.sort(() => Math.random() - 0.5).slice(0, 30);
     let index = 0;
+    let correct = 0;
+    let incorrect = 0;
 
-    function shuffle(array) {
-      return array.sort(() => Math.random() - 0.5);
+    const wordDiv = document.getElementById("word");
+    const scoreDiv = document.getElementById("score");
+    const resultDiv = document.getElementById("result");
+
+    function showWord() {
+        if (index >= shuffled.length) {
+            wordDiv.textContent = "Done!";
+            wordDiv.className = "";
+            resultDiv.textContent = `Final Score: ${correct} Correct, ${incorrect} Incorrect`;
+            return;
+        }
+        const item = shuffled[index];
+        wordDiv.textContent = item.word;
+        wordDiv.className = item.group;
     }
 
-    function showNextWord() {
-      if (index >= shuffled.length) {
-        shuffled = shuffle([...words]);
-        index = 0;
-      }
-      document.getElementById('wordDisplay').textContent = shuffled[index];
-      index++;
+    function updateScore() {
+        scoreDiv.textContent = `Correct: ${correct} | Incorrect: ${incorrect}`;
     }
 
-    document.body.addEventListener('click', showNextWord);
-  </script>
+    let startX = 0;
+
+    document.body.addEventListener('touchstart', e => {
+        startX = e.changedTouches[0].screenX;
+    });
+
+    document.body.addEventListener('touchend', e => {
+        const endX = e.changedTouches[0].screenX;
+        if (endX - startX > 50) {
+            incorrect++;
+        } else if (startX - endX > 50) {
+            correct++;
+        }
+        index++;
+        updateScore();
+        showWord();
+    });
+
+    document.body.addEventListener('click', () => {
+        if (index === 0 && correct === 0 && incorrect === 0) {
+            showWord();
+        }
+    });
+</script>
 </body>
 </html>
