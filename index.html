@@ -24,8 +24,8 @@
       margin-bottom: 40px;
     }
     .Reception { color: #007acc; }
-    .Year\ 1 { color: #28a745; }
-    .Year\ 2 { color: #e83e8c; }
+    .Year-1 { color: #28a745; }
+    .Year-2 { color: #e83e8c; }
     #score {
       position: absolute;
       top: 10px;
@@ -83,13 +83,13 @@
     ...["said", "says", "are", "were", "was", "is", "his", "has", "I", "you", "your",
       "they", "be", "he", "me", "she", "we", "no", "go", "so", "by", "my", "here",
       "there", "where", "love", "come", "some", "one", "once", "do", "does", "friend",
-      "school", "house", "our"].map(w => ({ word: w, group: "Year 1" })),
+      "school", "house", "our"].map(w => ({ word: w, group: "Year-1" })),
     ...["door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children",
       "wild", "climb", "most", "only", "both", "old", "cold", "gold", "hold", "told", "every",
       "everybody", "even", "great", "break", "steak", "pretty", "beautiful", "after", "fast", "last",
       "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove",
       "improve", "sure", "sugar", "eye", "could", "should", "would", "who", "whole", "any", "many",
-      "clothes", "busy", "people", "water"].map(w => ({ word: w, group: "Year 2" }))
+      "clothes", "busy", "people", "water"].map(w => ({ word: w, group: "Year-2" }))
   ];
 
   let shuffled = [];
@@ -148,7 +148,7 @@
 
   restartBtn.addEventListener("click", startGame);
 
-  // Start game on load
+  // Start on load
   startGame();
 </script>
 
