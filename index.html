@@ -1,115 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Word Flash</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Flash</title>
+  <style>
     body {
-        margin: 0;
-        padding: 0;
-        background-color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        font-family: sans-serif;
-        user-select: none;
-        overflow: hidden;
-        flex-direction: column;
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: sans-serif;
+      user-select: none;
     }
     #word {
-        font-size: 10vw;
-        font-weight: bold;
-        text-align: center;
-        padding: 40px;
+      font-size: 10vw;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 40px;
     }
     .Reception { color: #007acc; }
     .Year\ 1 { color: #28a745; }
     .Year\ 2 { color: #e83e8c; }
     #score {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 20px;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 18px;
+    }
+    #buttons {
+      display: flex;
+      gap: 20px;
+    }
+    button {
+      font-size: 18px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #correctBtn {
+      background-color: #28a745;
+      color: white;
+    }
+    #wrongBtn {
+      background-color: #dc3545;
+      color: white;
+    }
+    #restartBtn {
+      display: none;
+      margin-top: 20px;
+      font-size: 18px;
+      background-color: #007acc;
+      color: white;
     }
     #result {
-        font-size: 24px;
-        margin-top: 20px;
+      margin-top: 20px;
+      font-size: 22px;
     }
-</style>
+  </style>
 </head>
 <body>
+
 <div id="score">Correct: 0 | Incorrect: 0</div>
-<div id="word">Tap to Start</div>
+<div id="word">Tap a button to begin</div>
+
+<div id="buttons">
+  <button id="correctBtn">✅ Got it!</button>
+  <button id="wrongBtn">❌ Try again</button>
+</div>
+
 <div id="result"></div>
+<button id="restartBtn">🔄 Restart</button>
 
 <script>
-    const words = [
-        // Reception
-        ...["the", "to", "I", "no", "go", "into"].map(w => ({ word: w, group: "Reception" })),
-        // Year 1
-        ...["said", "says", "are", "were", "was", "is", "his", "has", "I", "you", "your",
-        "they", "be", "he", "me", "she", "we", "no", "go", "so", "by", "my", "here",
-        "there", "where", "love", "come", "some", "one", "once", "do", "does", "friend",
-        "school", "house", "our"].map(w => ({ word: w, group: "Year 1" })),
-        // Year 2
-        ...["door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children",
-        "wild", "climb", "most", "only", "both", "old", "cold", "gold", "hold", "told", "every",
-        "everybody", "even", "great", "break", "steak", "pretty", "beautiful", "after", "fast", "last",
-        "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove",
-        "improve", "sure", "sugar", "eye", "could", "should", "would", "who", "whole", "any", "many",
-        "clothes", "busy", "people", "water"].map(w => ({ word: w, group: "Year 2" }))
-    ];
+  const words = [
+    ...["the", "to", "I", "no", "go", "into"].map(w => ({ word: w, group: "Reception" })),
+    ...["said", "says", "are", "were", "was", "is", "his", "has", "I", "you", "your",
+      "they", "be", "he", "me", "she", "we", "no", "go", "so", "by", "my", "here",
+      "there", "where", "love", "come", "some", "one", "once", "do", "does", "friend",
+      "school", "house", "our"].map(w => ({ word: w, group: "Year 1" })),
+    ...["door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children",
+      "wild", "climb", "most", "only", "both", "old", "cold", "gold", "hold", "told", "every",
+      "everybody", "even", "great", "break", "steak", "pretty", "beautiful", "after", "fast", "last",
+      "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove",
+      "improve", "sure", "sugar", "eye", "could", "should", "would", "who", "whole", "any", "many",
+      "clothes", "busy", "people", "water"].map(w => ({ word: w, group: "Year 2" }))
+  ];
 
-    const shuffled = words.sort(() => Math.random() - 0.5).slice(0, 30);
-    let index = 0;
-    let correct = 0;
-    let incorrect = 0;
+  let shuffled = [];
+  let index = 0;
+  let correct = 0;
+  let incorrect = 0;
 
-    const wordDiv = document.getElementById("word");
-    const scoreDiv = document.getElementById("score");
-    const resultDiv = document.getElementById("result");
+  const wordDiv = document.getElementById("word");
+  const scoreDiv = document.getElementById("score");
+  const resultDiv = document.getElementById("result");
+  const correctBtn = document.getElementById("correctBtn");
+  const wrongBtn = document.getElementById("wrongBtn");
+  const restartBtn = document.getElementById("restartBtn");
 
-    function showWord() {
-        if (index >= shuffled.length) {
-            wordDiv.textContent = "Done!";
-            wordDiv.className = "";
-            resultDiv.textContent = `Final Score: ${correct} Correct, ${incorrect} Incorrect`;
-            return;
-        }
-        const item = shuffled[index];
-        wordDiv.textContent = item.word;
-        wordDiv.className = item.group;
+  function startGame() {
+    shuffled = words.sort(() => Math.random() - 0.5).slice(0, 30);
+    index = 0;
+    correct = 0;
+    incorrect = 0;
+    updateScore();
+    resultDiv.textContent = "";
+    restartBtn.style.display = "none";
+    showWord();
+  }
+
+  function showWord() {
+    if (index >= shuffled.length) {
+      wordDiv.textContent = "Done!";
+      wordDiv.className = "";
+      resultDiv.textContent = `Final Score: ${correct} Correct, ${incorrect} Incorrect`;
+      restartBtn.style.display = "block";
+      return;
     }
+    const item = shuffled[index];
+    wordDiv.textContent = item.word;
+    wordDiv.className = item.group;
+  }
 
-    function updateScore() {
-        scoreDiv.textContent = `Correct: ${correct} | Incorrect: ${incorrect}`;
-    }
+  function updateScore() {
+    scoreDiv.textContent = `Correct: ${correct} | Incorrect: ${incorrect}`;
+  }
 
-    let startX = 0;
+  correctBtn.addEventListener("click", () => {
+    correct++;
+    index++;
+    updateScore();
+    showWord();
+  });
 
-    document.body.addEventListener('touchstart', e => {
-        startX = e.changedTouches[0].screenX;
-    });
+  wrongBtn.addEventListener("click", () => {
+    incorrect++;
+    index++;
+    updateScore();
+    showWord();
+  });
 
-    document.body.addEventListener('touchend', e => {
-        const endX = e.changedTouches[0].screenX;
-        if (endX - startX > 50) {
-            incorrect++;
-        } else if (startX - endX > 50) {
-            correct++;
-        }
-        index++;
-        updateScore();
-        showWord();
-    });
+  restartBtn.addEventListener("click", startGame);
 
-    document.body.addEventListener('click', () => {
-        if (index === 0 && correct === 0 && incorrect === 0) {
-            showWord();
-        }
-    });
+  // Start game on load
+  startGame();
 </script>
+
 </body>
 </html>
